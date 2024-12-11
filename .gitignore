@@ -1,0 +1,59 @@
+# General Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+*.venv
+.env
+.venv
+.env.*
+*.env.*
+
+# Django
+*.log
+*.pot
+*.py[cod]
+*.sqlite3
+/media/
+/staticfiles/
+/static/
+config/settings/*.pyc
+
+# Exclude Django migrations
+**/migrations/**
+!**/migrations/__init__.py
+
+# Virtual environment
+/env/
+
+# VSCode
+.vscode/
+
+# Docker
+*.pid
+*.seed
+*.pid.lock
+__pycache__
+
+
+# Byte-compiled / optimized / DLL files
+*.pyd
+*.pyo
+__pycache__
+*.so
+
+# Local development artifacts
+*.env
+db.sqlite3
+*.pot
+
+# IDEs
+.idea/
+.vscode/
+
+# Node.js for frontend dependencies (if any)
+node_modules/
+
+# Exclude IDE folders and files
+.vscode/
