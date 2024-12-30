@@ -18,7 +18,24 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+ASGI_APPLICATION = "config.asgi.application"
 
+#! 
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",  # Use Redis for production
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],  # Redis server address (default)
+        },
+    },
+}
+
+#For local development you can use asgiref LocalMemoryChannelLayer
+#CHANNEL_LAYERS = {
+#    "default": {
+#        "BACKEND": "channels.layers.InMemoryChannelLayer"
+#    }
+#}
 # Application definition
 DJANGO_APPS = [
     'django.contrib.admin',
@@ -32,7 +49,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'debug_toolbar',
     'bootstrap5',
-    "django_browser_reload",
+    'channels',
 ]
 PROJECT_APPS = [
     'app.core',
@@ -40,11 +57,14 @@ PROJECT_APPS = [
     'app.common',
     'app.chat',
     'app.appointments',
+    'app.blog',
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 # Specify internal IPs for local development 
 INTERNAL_IPS = [ '127.0.0.1', ]
+
 MIDDLEWARE = [
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,7 +73,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',#! debug toolbar middleware
-    'django_browser_reload.middleware.BrowserReloadMiddleware',#! browser reload
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'app.core.middleware.usertype.UserTypeMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -107,7 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-AUTH_USER_MODEL = 'account.CustomUser'
+#AUTH_USER_MODEL = 'account.CustomUser'
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -119,6 +140,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL = 'account.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -127,7 +149,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS=[
     BASE_DIR/'static'
 ]
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Absolute path where static files will be collected
 #! Base directory for storing media files
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 #! URL for accessing media files
@@ -149,5 +171,24 @@ EMAIL_HOST_PASSWORD =config('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
-LOGIN_REDIRECT_URL = 'redirect_to_dashboard'
+LOGIN_REDIRECT_URL = 'home_patient'
 LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = None
+
+
+
+# celery settings
+
+#settings.py
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0' #Use your redis url if you have password or other configuration
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0' #Use your redis url if you have password or other configuration
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TIMEZONE = 'Asia/Karachi' #Your Time Zone
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+
+
+
+

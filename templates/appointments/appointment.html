@@ -1,0 +1,296 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mb-4">
+  <div class="row mt-4"> 
+    <div class="accordion" id="accordionPanelsStayOpenExample">
+      <!-- Completed Appointments -->
+<div class="accordion-item mb-2">
+  <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+    <button class="accordion-button collapsed bg-secondary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+      <b>Completed Appointments</b>
+    </button>
+  </h2>
+  <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+    <div class="accordion-body" id="app-schedule-over">
+      {% if app_over %}
+        {% for appointment in app_over %}
+          <div class="card m-3">
+            <div class="card-header">
+              Appointment No. {{ appointment.id }}
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-8">
+                  <h5 class="card-title">Date: {{ appointment.appointment_start_datetime|date:"Y-m-d" }}, Time: {{ appointment.appointment_start_datetime|time:"H:i" }}</h5>
+                  <p class="card-text">
+                    Appointment with Dr. {{ appointment.doctor.user.username }} 
+                  </p>
+                  {% if user.is_authenticated and user.is_doctor %}
+                    {% if appointment.prescription %}
+                      <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#prescriptionModal" data-appointment-id="{{ appointment.id }}" data-doctor-notes="{{ appointment.prescription.doctor_notes }}" data-file-url="{{ appointment.prescription.prescription_file.url }}">Edit Prescription</button>
+                      <button class="btn btn-danger delete-prescription" data-appointment-id="{{ appointment.id }}">Delete Prescription</button>
+                    {% else %}
+                      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#prescriptionModal" data-appointment-id="{{ appointment.id }}">Add Prescription</button>
+                    {% endif %}
+                  {% endif %}
+                </div>
+                <div class="col-md-4">
+                  {% if appointment.prescription %}
+                    <a href="{{ appointment.prescription.prescription_file.url }}" target="_blank">View Prescription</a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>No Completed Appointments</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+      
+
+      <!-- Active Appointments -->
+      <div class="accordion-item mb-2">
+        <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+          <button class="accordion-button bg-danger text-white" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
+            <b>Active Appointments</b>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingTwo">
+          <div class="accordion-body" id="app-schedule-active">
+            {% if app_active %}
+              {% for appointment in app_active %}
+                <div class="card m-3 border-danger">
+                  <div class="card-header">
+                    Appointment No. {{ appointment.id }} 
+                    <span class="text-danger m-4"><i class="bi bi-record-circle"></i><b> Active Now</b></span>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <h5 class="card-title">Date: {{ appointment.appointment_start_datetime|date:"Y-m-d" }}, Time: {{ appointment.appointment_start_datetime|time:"H:i" }}</h5>
+                        <p class="card-text">
+                          Appointment with Dr.  {{ appointment.doctor.user.username }} 
+                        </p>
+                        <a href="{% url 'main-chat-view' appointment.id %}" class="btn btn-success" target="_blank">Start Appointment</a>
+                      </div>
+                      <div class="col-md-4">
+                        <p><u><small>Email:</small> <b>{{ appointment.doctor.user.email }}</b></u></p>
+                        <p><u><small>Contact no:</small> <b>{{ appointment.doctor.contact }}</b></u></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>No Active Appointments</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Upcoming Appointments -->
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+          <button class="accordion-button bg-primary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree">
+            <b>Upcoming Appointments</b>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingThree">
+          <div class="accordion-body" id="app-schedule-upcoming">
+            {% if app_upcoming %}
+              {% for appointment in app_upcoming %}
+                <div class="card m-3 border-primary">
+                  <div class="card-header bg-primary text-white">
+                    Appointment No. {{ appointment.id }}
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Date: {{ appointment.appointment_start_datetime|date:"Y-m-d" }}, Time: {{ appointment.appointment_start_datetime|time:"H:i" }}</h5>
+                    <p class="card-text">
+                      Appointment with Dr.  {{ appointment.doctor.user.username }} 
+                    </p>
+                    <a href="#" class="btn btn-primary disabled" target="_blank">Upcoming</a>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>No Upcoming Appointments</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>  
+  </div>   
+</div>
+{% include "appointments/modal/prescription_modal.html" %}
+<script src="{% static 'js/prescription.js' %}"></script>
+{% endblock %}
+
+{% comment %} <!-- Completed Appointments -->
+      <div class="accordion-item mb-2">
+        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+          <button class="accordion-button collapsed bg-secondary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+            <b>Completed Appointments</b>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+          <div class="accordion-body" id="app-schedule-over">
+            {% if app_over %}
+              {% for appointment in app_over %}
+                <div class="card m-3">
+                  <div class="card-header">
+                    Appointment No. {{ appointment.id }}
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <h5 class="card-title">Date: {{ appointment.appointment_start_datetime|date:"Y-m-d" }}, Time: {{ appointment.appointment_start_datetime|time:"H:i" }}</h5>
+                        <p class="card-text">
+                          Appointment with Dr. {{ appointment.doctor.user.first_name }} {{ appointment.doctor.user.last_name }}
+                        </p>
+                        <a href="#" class="btn btn-secondary" target="_blank">Appointment is Over</a>
+                      </div>
+                      <div class="col-md-4">
+                        {% if appointment.prescription %}
+                          <a href="{{ appointment.prescription.prescription_file.url }}" target="_blank">View Prescription</a>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>No Completed Appointments</p>
+            {% endif %}
+          </div>
+        </div>
+      </div> {% endcomment %}
+{% comment %} {% extends "base/base.html" %}
+
+{% block content %}
+<div class="container mb-4">
+  <div class="row mt-4"> 
+    <div class="accordion" id="accordionPanelsStayOpenExample">
+
+      <div class="accordion-item mb-2">
+        <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+          <button class="accordion-button collapsed bg-secondary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+            <b>Completed Appointments</b>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+          <div class="accordion-body" id="app-schedule-over">
+
+            <!-- completed appointments -->
+            {% if app_over %}
+            {% for appointment in app_over %}
+            
+                <div class="card m-3">
+                  <div class="card-header">
+                    Appointment No. {{appointment.id}}
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <h5 class="card-title">Date: {{appointment.date}}, Time: {{appointment.time}}</h5>
+                        <p class="card-text">Appointment with Dr. {{appointment.doctor.first_name}} {{appointment.doctor.last_name}} on {{appointment.date}}</p>
+                        <a href="#" class="btn btn-secondary" target="_blank">Appointment is Over</a>
+                      </div>
+                      <div class="col-md-4">
+                        {% if appointment.prescription %}
+                        <a href="#" target="_blank">View Prescription</a>
+                        {% endif %}
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+            {% endfor %}
+            {% else %}
+                <div><p>No Appointments</p></div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item mb-2">
+        <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+          <button class="accordion-button bg-danger text-white" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="true" aria-controls="panelsStayOpen-collapseTwo">
+            <b>Active Appointments</b>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingTwo">
+          <div class="accordion-body" id="app-schedule-active">
+
+            <!-- active appointments -->
+            {% if app_active %}
+            {% for appointment in app_active %}
+                <div class="card m-3 border-danger">
+                  <div class="card-header">
+                    Appointment No. {{appointment.id}} <span class="text-danger m-4"><i class="bi bi-record-circle"></i><b> Active Now</b></span>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <h5 class="card-title">Date: {{appointment.date}}, Time: {{appointment.time}}</h5>
+                        <p class="card-text">Appointment with Dr. {{appointment.doctor.first_name}} {{appointment.doctor.last_name}} on {{appointment.date}}</p>
+                        <a href="#" class="btn btn-success" target="_blank">Start Appointment</a>       
+                      </div>
+                      <div class="col-md-4">
+                        {% if appointment.prescription %}
+                        <a href="#" target="_blank">View Prescription</a>
+                        {% endif %}
+                        <p><u><small>Email:</small> <b>{{appointment.doctor.email}}</b> </u></p>
+                        <p><u><small>Contact no:</small> <b>{{appointment.doctor.contact}}</b></u></p>
+                      </div>
+                    </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% else %}
+                <div><p>No Appointments</p></div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+          <button class="accordion-button bg-primary text-white" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="true" aria-controls="panelsStayOpen-collapseThree">
+            <b>Upcoming Appointments</b>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingThree">
+          <div class="accordion-body" id="app-schedule-upcomming">
+            <!-- for upcomming appointments -->
+            {% if app_upcomming %}
+            {% for appointment in app_upcomming %}
+
+                <div class="card m-3 border-primary">
+                  <div class="card-header bg-primary text-white">
+                    Appointment No. {{appointment.id}}
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">Date: {{appointment.date}}, Time: {{appointment.time}}</h5>
+                    <p class="card-text">Appointment with Dr. {{appointment.doctor.first_name}} {{appointment.doctor.last_name}} on {{appointment.date}}</p>
+                    <a href="#" class="btn btn-primary disabled" target="_blank">Upcoming</a>
+                  </div>
+                </div>
+            {% endfor %}
+            {% else %}
+                <div><p>No Appointments</p></div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>  
+  </div>   
+</div>
+
+{% endblock %} {% endcomment %}

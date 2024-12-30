@@ -1,0 +1,31 @@
+<!-- appointment_modal.html -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="appointmentModalLabel">Appointment with Dr. <span id="doctor-name"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="appointment-date" class="form-label">Select a date for appointment:</label>
+          <input type="date" id="appointment-date" class="form-control" required>
+        </div>
+        <button class="btn btn-primary" id="check-availability-btn">Check Availability</button>
+
+        <div id="availability-results" class="mt-3" style="display:none;">
+          <p id="availability-message"></p>
+          <ul id="availability-slots" class="list-group" style="display:none;"></ul>
+        </div>
+
+        <div id="no-availability-message" class="mt-3 text-center" style="display:none;">
+          <p><i class="bi bi-emoji-frown"></i><br>
+            <h3>Not Available on this day</h3></p>
+        </div>
+      </div>
+
+      
+    </div>
+  </div>
+  <div id="appointment-details-container"></div>
+</div>

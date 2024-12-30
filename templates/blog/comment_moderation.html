@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Moderate Comments</h1>
+    <ul>
+        {% for comment in comments %}
+            <li>
+                <p>{{ comment.content }} - <strong>{{ comment.author }}</strong></p>
+                <a href="{% url 'approve_comment' comment.id %}">Approve</a>
+                <a href="{% url 'delete_comment' comment.id %}">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

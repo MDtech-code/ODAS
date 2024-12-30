@@ -1,0 +1,12 @@
+<div class="col-md-4">
+    <div class="card">
+        {% if article.image %}
+            <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}">
+        {% endif %}
+        <div class="card-body">
+            <h5 class="card-title">{{ article.title }}</h5>
+            <p class="card-text">{{ article.content|truncatewords:20 }}</p>
+            <a href="{% url 'article_detail' article.id %}" class="btn btn-primary">Read More</a>
+        </div>
+    </div>
+</div>

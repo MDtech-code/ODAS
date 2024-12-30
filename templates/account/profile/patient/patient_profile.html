@@ -1,0 +1,133 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}Patient Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Patient Profile</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">First Name:</div>
+                        <div class="col-md-8">{{ patient.user.first_name|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Last Name:</div>
+                        <div class="col-md-8">{{ patient.user.last_name|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Username:</div>
+                        <div class="col-md-8">{{ patient.user.username|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Email:</div>
+                        <div class="col-md-8">{{ patient.user.email|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Gender:</div>
+                        <div class="col-md-8">{{ patient.gender|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Phone Number:</div>
+                        <div class="col-md-8">{{ patient.phone_number|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Date of Birth:</div>
+                        <div class="col-md-8">{{ patient.date_of_birth|date:"F d, Y"|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Address:</div>
+                        <div class="col-md-8">{{ patient.address|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Medical History:</div>
+                        <div class="col-md-8">{{ patient.medical_history|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Medical Conditions:</div>
+                        <div class="col-md-8">{{ patient.medical_conditions|default:"N/A" }}</div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'edit_patient_profile' %}" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">Uploaded Reports</h4>
+                </div>
+                <div class="card-body">
+                    {% if reports %}
+                        <ul class="list-group">
+                            {% for report in reports %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <a href="{{ report.file.url }}" target="_blank">{{ report.name }}</a>
+                                    <div>
+                                        <button class="btn btn-sm btn-outline-primary update-report-btn" data-report-id="{{ report.id }}" data-report-name="{{ report.name }}">Update</button>
+                                        <button class="btn btn-sm btn-outline-danger delete-report-btn" data-report-id="{{ report.id }}">Delete</button>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">You have not uploaded any reports yet.</p>
+                    {% endif %}
+                    <div class="text-center mt-4">
+                        <button class="btn btn-success" id="upload-new-report-btn">Upload Report</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="uploadReportModal" tabindex="-1" aria-labelledby="uploadReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadReportModalLabel">Upload Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="report-form" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="report-name" class="form-label">Report Name</label>
+                        <input type="text" class="form-control" id="report-name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="report-file" class="form-label">Report File</label>
+                        <input type="file" class="form-control" id="report-file" name="file" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+{% block scripts %}
+<script src="{% static 'js/reports.js' %}"></script>
+{% endblock %}
+
+
+{% endblock %}
+
+
+
+
+    

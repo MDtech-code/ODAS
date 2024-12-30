@@ -1,0 +1,72 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4">Articles</h1>
+    <div class="row">
+        {% for article in articles %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    {% if article.image %}
+                        <img src="{{ article.image.url }}" class="card-img-top" alt="{{ article.title }}">
+                    {% else %}
+                        <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                            <span class="text-muted">No Image Available</span>
+                        </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="text-muted small mb-2">
+                            {{ article.created_at|date:"F d, Y" }} &bull; Dr. {{ article.doctor.user.get_full_name }}
+                        </p>
+                        <h5 class="card-title">
+                            <a href="{% url 'article_detail' article.id %}" class="text-decoration-none text-dark">
+                                {{ article.title }}
+                            </a>
+                        </h5>
+                        <p class="card-text">{{ article.content|truncatewords:20 }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+{% comment %} {% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Articles</h1>
+    <ul class="article-list">
+        {% for article in articles %}
+            <li>
+                <a href="{% url 'article_detail' article.id %}">{{ article.title }}</a>
+                <p>{{ article.description|truncatewords:20 }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %} {% endcomment %}
+
+
+
+
+
+{% comment %} {% extends "base/base.html" %}
+{% block title %}Blog{% endblock %}
+{% block content %}
+<h1>Blog Articles</h1>
+<div class="row">
+    {% for article in articles %}
+        {% include "include/article_card.html" %}
+    {% endfor %}
+</div>
+{% endblock %} {% endcomment %}

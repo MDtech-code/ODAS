@@ -1,0 +1,28 @@
+<div class="modal fade" id="paymentMethodModal" tabindex="-1" aria-labelledby="paymentMethodModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="paymentMethodModalLabel">Add Payment Method</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="paymentMethodForm">
+          <div class="mb-3">
+            <label for="paymentType" class="form-label">Payment Type</label>
+            <select id="paymentType" class="form-select" required>
+              <option value="" selected disabled>Select Payment Type</option>
+              <option value="jazzcash">JazzCash</option>
+              <option value="easypaisa">EasyPaisa</option>
+              <option value="bank_account">Bank Account</option>
+              <option value="credit_card">Credit/Debit Card</option>
+            </select>
+          </div>
+
+          <div id="paymentDetails"></div>
+
+          <button type="submit" class="btn btn-primary mt-3">Save Payment Method</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

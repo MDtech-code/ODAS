@@ -1,0 +1,78 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% load doctor_filters %}
+
+{% block content %}
+<div>
+    <h2>Available Doctors</h2>
+    <!-- Search Bar -->
+    <div>
+        <form id="searchForm" method="GET" action="{% url 'patient_dashboard' %}">
+            <input 
+                type="text" 
+                name="search" 
+                value="{{ query }}" 
+                placeholder="Search by doctor name or speciality" 
+                id="searchInput" 
+                class="search-input" 
+            />
+            <button type="submit" class="search-btn">Search</button>
+        </form>
+    </div>
+
+    <div>
+        {% for doctor in doctors %}
+        <div>
+            <!-- Doctor Image -->
+            <img 
+                src="{{ doctor.image.url }}" 
+                alt="{{ doctor.user.username }}"
+            />
+            <!-- Doctor Name and Speciality -->
+            <h3>{{ doctor.user.get_full_name|default:doctor.user.username }}</h3>
+            <p>{{ doctor.speciality.name }}</p>
+
+             <!-- Availability -->
+<div>
+    <h4>Availability</h4>
+    <div>
+        {% for day in doctor.unique_days %}
+            <span>
+                {{ day|get_day_display }}
+            </span>
+        {% endfor %}
+    </div>
+</div>
+            {% comment %} <div>
+                <h4>Availability</h4>
+                <div>
+                    {% for availability in doctor.availability.all %}
+                        <span>
+                            {{ availability.get_day_of_week_display }}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+             {% endcomment %}
+            <!-- Charges -->
+            <div>
+                Charges: Rs. {{ doctor.consultation_fee|floatformat:2 }}
+            </div>
+
+            <!-- Book Appointment Button -->
+            <div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#appointmentModal" data-doctor-name="{{ doctor.user.get_full_name|default:doctor.user.username }}">
+  Book Appointment
+</button>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<!-- Include Modal for check Availability -->
+{% include "dashboard/patient/modals/check_availability_modal.html" %}
+<script src="{% static 'js/check_availability.js' %}"></script>
+
+
+{% endblock %}

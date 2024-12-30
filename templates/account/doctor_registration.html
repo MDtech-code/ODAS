@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>doctor Registration</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <span class="help-text hidden" id="help-text-{{ field.id_for_label }}">
+                        {{ field.help_text }}
+                    </span>
+                {% endif %}
+                {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+</div>
+{% endblock %}
+
+{% comment %} {% extends 'base/base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Doctor Registration</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Register</button>
+        </div>
+    </form>
+    <div class="mt-3">
+        <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+    </div>
+</div>
+{% endblock %} {% endcomment %}

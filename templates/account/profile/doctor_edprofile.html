@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Doctor Profile</h1>
+    <hr>
+    <!-- Doctor Profile Update Form -->
+    <div class="profile-section">
+        <h2>Update Profile</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+        </form>
+    </div>
+    <hr>
+    <!-- Availability Management -->
+    <div class="availability-section">
+        <h2>Manage Availability</h2>
+        <!-- Add Availability Form -->
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="add_availability" value="1">
+            {{ availability_form.as_p }}
+            <button type="submit" class="btn btn-primary">Add Availability</button>
+        </form>
+        <hr>
+        <!-- Display Existing Availabilities -->
+        <h3>Your Current Availability</h3>
+        {% if availabilities %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for availability in availabilities %}
+                        <tr>
+                            <td>{{ availability.get_day_of_week_display }}</td>
+                            <td>{{ availability.start_time }}</td>
+                            <td>{{ availability.end_time }}</td>
+                            <td>
+                                <form method="post" action="{% url 'delete_availability' availability.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No availability added yet.</p>
+        {% endif %}
+    </div>
+    <hr>
+    <!-- Payment Methods Management Section -->
+    <div class="payment-section">
+        <h2>Manage Payment Methods</h2>
+        {% if payment_methods is not None %}
+            <!-- Add Payment Method Form -->
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="add_payment_method" value="1">
+                {{ payment_form.as_p }}
+                <button type="submit" class="btn btn-primary">Add Payment Method</button>
+            </form>
+            <hr>
+            <h3>Your Current Payment Methods</h3>
+            {% if payment_methods %}
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Account/IBAN</th>
+                            <th>Bank/Card Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for payment in payment_methods %}
+                            <tr>
+                                <td>{{ payment.get_payment_type_display }}</td>
+                                <td>{{ payment.account_number|default:"N/A" }}</td>
+                                <td>
+                                    {% if payment.bank_name %}
+                                        {{ payment.bank_name }} - {{ payment.iban }}
+                                    {% elif payment.card_number %}
+                                        **** **** **** {{ payment.card_number }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method="post" action="{% url 'delete_payment_method' payment.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No payment methods added yet.</p>
+            {% endif %}
+        {% else %}
+            <p>Payment method management is available only for verified doctors.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

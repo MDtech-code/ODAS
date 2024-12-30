@@ -1,0 +1,242 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}Doctor Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Dr. {{ doctor.user.first_name }} {{ doctor.user.last_name }}</h4>
+        </div>
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-md-4 text-center">
+              {% if doctor.image %}
+                <img src="{{ doctor.image.url }}" alt="Doctor Profile Picture" class="img-thumbnail rounded-circle doctor-profile-pic">
+              {% else %}
+                <i class="fas fa-user-circle fa-5x text-secondary"></i>
+              {% endif %}
+            </div>
+            <div class="col-md-8">
+              <div class="row mb-3">
+                <div class="col-md-6 fw-bold">Speciality:</div>
+                <div class="col-md-6">{{ doctor.speciality.name|default:"N/A" }}</div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6 fw-bold">Years of Experience:</div>
+                <div class="col-md-6">{{ doctor.years_of_experience|default:"N/A" }}</div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6 fw-bold">Consultation Fee:</div>
+                <div class="col-md-6">{{ doctor.consultation_fee|default:"N/A" }}</div>
+              </div>
+              <a href="{% url 'edit_doctor_profile' %}" class="btn btn-primary mt-2">Edit Profile</a>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-12 fw-bold">Bio:</div>
+            <div class="col-md-12">{{ doctor.bio|default:"N/A" }}</div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-12 fw-bold">Certification:</div>
+            <div class="col-md-12">
+              {% if doctor.certificate %}
+                <a href="{{ doctor.certificate.url }}" class="text-primary" download>Download Certificate</a>
+              {% else %}
+                N/A
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+    </div>
+  </div>
+{% if  user.is_authenticated and user.user_type == 'doctor' and user.doctor.is_verified %}
+  <!-- Section: Doctor Availability -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">Your Availability</h5>
+  </div>
+  <div class="card-body">
+    <div id="availability-section">
+      {% if doctor.availability.exists %}
+        <ul class="list-group">
+          {% for slot in doctor.availability.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ slot.get_day_of_week_display }}: {{ slot.start_time }} - {{ slot.end_time }}
+              <button class="btn btn-danger btn-sm delete-btn" data-id="{{ slot.id }}">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">You did not create any availability yet.</p>
+      {% endif %}
+    </div>
+    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#availabilityModal">Add Availability</button>
+  </div>
+</div>
+
+<!-- Section: Payment Methods -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">Your Payment Methods</h5>
+  </div>
+  <div class="card-body">
+    <div id="payment-methods-section">
+      {% if doctor.payment_methods.exists %}
+        <ul class="list-group">
+          {% for method in doctor.payment_methods.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ method.get_payment_type_display }}</strong>
+                {% if method.payment_type == 'jazzcash' or method.payment_type == 'easypaisa' %}
+                  <span class="text-muted">({{ method.account_number }})</span>
+                {% elif method.payment_type == 'bank_account' %}
+                  <span class="text-muted">{{ method.bank_name }} ({{ method.iban }})</span>
+                {% elif method.payment_type == 'credit_card' %}
+                  <span class="text-muted">Card ending in {{ method.card_number|slice:"-4:" }}</span>
+                {% endif %}
+              </div>
+              <button
+                class="btn btn-danger btn-sm delete-payment-method"
+                data-id="{{ method.id }}"
+              >
+                Delete
+              </button>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">You did not create any payment method yet.</p>
+      {% endif %}
+    </div>
+    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#paymentMethodModal">Add Payment Method</button>
+  </div>
+</div>
+{% else %}
+  <p class="text-muted">You are not a verified doctor. Please wait for the admin to verify your account to access this other profile sections.</p>
+{% endif %}
+{% comment %} 
+      <!-- Section: Payment Methods -->
+<div class="card shadow-sm mb-4">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">Your Payment Methods</h5>
+  </div>
+  <div class="card-body">
+    <div id="payment-methods-section">
+      {% if doctor.payment_methods.exists %}
+        <ul class="list-group">
+          {% for method in doctor.payment_methods.all %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>{{ method.get_payment_type_display }}</span>
+              {% if method.payment_type == 'jazzcash' or method.payment_type == 'easypaisa' %}
+                <span>{{ method.account_number }}</span>
+              {% elif method.payment_type == 'bank_account' %}
+                <span>{{ method.bank_name }} ({{ method.iban }})</span>
+              {% elif method.payment_type == 'credit_card' %}
+                <span>Card ending in {{ method.card_number }}</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">You did not create any payment method yet.</p>
+      {% endif %}
+    </div>
+    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#paymentMethodModal">Add Payment Method</button>
+  </div>
+</div> {% endcomment %}
+
+
+</div>
+
+ 
+<!-- Include Modal for Availability -->
+{% include "account/profile/doctor/modals/availability_modal.html" %}
+<!-- Include Modal for Payment Methods -->
+{% include "account/profile/doctor/modals/payment_method_modal.html" %}
+
+<!-- Place this before the closing body tag -->
+<script src="{% static 'js/doctor_availability.js' %}"></script>
+<script src="{% static 'js/doctor_payment_methods.js' %}"></script>
+
+{% endblock %}
+{% comment %} {% extends "base/base.html" %}
+{% load static %}
+{% block title %}doctor Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">doctor Profile</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">First Name:</div>
+                        <div class="col-md-8">{{ doctor.user.first_name|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Last Name:</div>
+                        <div class="col-md-8">{{ doctor.user.last_name|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Username:</div>
+                        <div class="col-md-8">{{ doctor.user.username|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Email:</div>
+                        <div class="col-md-8">{{ doctor.user.email|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Gender:</div>
+                        <div class="col-md-8">{{ doctor.gender|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Phone Number:</div>
+                        <div class="col-md-8">{{ doctor.phone_number|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Date of Birth:</div>
+                        <div class="col-md-8">{{ doctor.date_of_birth|date:"F d, Y"|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Bio:</div>
+                        <div class="col-md-8">{{ doctor.bio|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Speciality:</div>
+                        <div class="col-md-8">{{ doctor.speciality.name|default:"N/A" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Years_of_experience:</div>
+                        <div class="col-md-8">{{ doctor.years_of_experience|default:"N/A" }}</div>
+                    </div>
+                     <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Consultation_fee:</div>
+                        <div class="col-md-8">{{ doctor.consultation_fee|default:"N/A" }}</div>
+                    </div>
+                     <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">certificate:</div>
+                        <div class="col-md-8">{{ doctor.|default:"N/A" }}</div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'edit_doctor_profile' %}" class="btn btn-primary">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+     {% endcomment %}

@@ -1,0 +1,11 @@
+{% extends "base/base.html" %}
+
+{% block title %}Doctor Home{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1>Welcome, Doctor</h1>
+    <p>This is the home page for doctors.</p>
+    <a href="{% url 'doctor_dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+</div>
+{% endblock %}

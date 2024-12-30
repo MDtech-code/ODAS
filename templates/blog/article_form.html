@@ -1,0 +1,27 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ form_title }}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">{{ button_text }}</button>
+    </form>
+</div>
+{% endblock %}
+
+{% comment %} {% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Create a New Article</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create</button>
+    </form>
+</div>
+{% endblock %} {% endcomment %}

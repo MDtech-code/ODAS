@@ -1,0 +1,28 @@
+<!-- Prescription Modal -->
+<div class="modal fade" id="prescriptionModal" tabindex="-1" aria-labelledby="prescriptionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="prescriptionModalLabel">Manage Prescription</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="prescriptionForm" enctype="multipart/form-data">
+        <div class="modal-body">
+          <input type="hidden" name="appointment_id" id="appointmentId">
+          <div class="mb-3">
+            <label for="doctorNotes" class="form-label">Doctor Notes</label>
+            <textarea class="form-control" id="doctorNotes" name="doctor_notes" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="prescriptionFile" class="form-label">Prescription File</label>
+            <input type="file" class="form-control" id="prescriptionFile" name="prescription_file" accept=".pdf" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Save Prescription</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

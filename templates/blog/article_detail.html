@@ -1,0 +1,227 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ article.title }}</h1>
+    <p>{{ article.content }}</p>
+    {% if article.image %}
+    <img src="{{ article.image.url }}" alt="{{ article.title }}" style="max-width: 100%; height: auto;">
+    {% endif %}
+    <hr>
+    {% if request.user.is_authenticated and request.user == article.doctor.user %}
+    <a href="{% url 'article_update' pk=article.pk %}" class="btn btn-primary">Edit Article</a>
+    <a href="{% url 'article_delete' pk=article.pk %}" class="btn btn-danger">Delete Article</a>
+    {% endif %}
+    <hr>
+    <h3>Comments</h3>
+    <ul>
+    {% for comment in article.comments.all %}
+        <li>
+            {% if not request.user.is_authenticated %}
+                <!-- If no user is logged in, show only approved comments -->
+                {% if comment.is_approved %}
+                    {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                    <i class="fas fa-check-circle text-success" title="Approved"></i> <!-- Green check for approved -->
+                {% else %}
+                    <h3>No comment yet</h3>
+                {% endif %}
+                
+            {% elif request.user.user_type == 'patient' %}
+                <!-- If patient is logged in, show their own approved and unapproved comments, and other patients' approved comments -->
+                {% if comment.patient == request.user.patient %}
+                    <!-- If it's the patient's own comment, show both approved and unapproved comments -->
+                    {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                    {% if comment.is_approved %}
+                        <i class="fas fa-check-circle text-success" title="Approved"></i> <!-- Green check for approved -->
+                    {% else %}
+                        <i class="fas fa-hourglass-half text-warning" title="Pending Approval"></i> <!-- Hourglass for pending approval -->
+                    {% endif %}
+                {% else %}
+                    <!-- If it's another patient's comment, show only approved comments -->
+                    {% if comment.is_approved %}
+                        {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                        <i class="fas fa-check-circle text-success" title="Approved"></i>
+                    {% else %}
+                        <h3>No comment yet</h3>
+                    {% endif %}
+                {% endif %}
+                
+            {% elif request.user.user_type == 'doctor' %}
+                <!-- If doctor is logged in, show all comments related to their own articles and only approved comments from other doctors -->
+                {% if comment.article.author == request.user %}
+                    <!-- Show comments for the current doctor's own articles -->
+                    {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                    {% if not comment.is_approved %}
+                        <a href="{% url 'approve_comment' pk=comment.pk %}" class="btn-icon" title="Approve">
+                            <i class="fas fa-check"></i>
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'delete_comment' pk=comment.pk %}" class="btn-icon" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                {% elif comment.is_approved %}
+                    <!-- Show approved comments for other doctors -->
+                    {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                    <i class="fas fa-check-circle text-success" title="Approved"></i>
+                {% else %}
+                    <h3>No comment yet</h3>
+                {% endif %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+    {% comment %} <ul>
+    {% for comment in article.comments.all %}
+        <li>
+            {% if not request.user.is_authenticated %}
+                <!-- If no user is logged in, show only approved comments -->
+                {% if comment.is_approved %}
+                    {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                {% else %}
+                    <h3>No comment yet</h3>
+                {% endif %}
+                
+            {% elif request.user.user_type == 'patient' %}
+                <!-- If patient is logged in, show their own approved and unapproved comments, and other patients' approved comments -->
+                {% if comment.patient == request.user.patient %}
+                    <!-- If it's the patient's own comment, show both approved and unapproved comments -->
+                    {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                    {% if comment.is_approved %}
+                        <i class="fas fa-check-circle text-success" title="Approved"></i> <!-- Green check for approved -->
+                    {% else %}
+                        <i class="fas fa-hourglass-half text-warning" title="Pending Approval"></i> <!-- Hourglass for pending approval -->
+                    {% endif %}
+                {% else %}
+                    <!-- If it's another patient's comment, show only approved comments -->
+                    {% if comment.is_approved %}
+                        {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                        <i class="fas fa-check-circle text-success" title="Approved"></i>
+                    {% else %}
+                            <h3>No comment yet </h3>
+                    {% endif %}
+                {% endif %}
+                
+            {% elif request.user.user_type == 'doctor' %}
+             
+                <!-- If doctor is logged in, show all comments with options to approve or delete -->
+                {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                {% if not comment.is_approved %}
+    <a href="{% url 'approve_comment' pk=comment.pk %}" class="btn-icon" title="Approve">
+        <i class="fas fa-check"></i>
+    </a>
+{% endif %}
+<a href="{% url 'delete_comment' pk=comment.pk %}" class="btn-icon" title="Delete">
+    <i class="fas fa-trash"></i>
+</a>
+
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul> {% endcomment %}
+
+
+                {% comment %} {% if not comment.is_approved %}
+                    <a href="{% url 'approve_comment' pk=comment.pk %}">Approve</a>
+                {% endif %}
+                <a href="{% url 'delete_comment' pk=comment.pk %}">Delete</a> {% endcomment %}
+    {% comment %} <ul>
+    {% for comment in article.comments.all %}
+        <li>
+            {% if not request.user.is_authenticated %}
+                {% if comment.is_approved %}
+                {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                {% else %}
+                <h3>there is no comment yet</h3>
+                {% endif %}      
+            {% elif request.user.user_type == 'patient' %}
+                <!-- Show both approved and unapproved comments to patients -->
+                {% if comment.is_approved %}
+                {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                    <span>(Approved)</span>
+                {% else %}
+                {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                    <span>(Pending Approval)</span>
+                {% endif %}
+                
+            {% elif request.user.user_type == 'doctor' %}
+                <!-- Show both approved and unapproved comments to doctors with approve/delete options -->
+                {% if not comment.is_approved %}
+                    <a href="{% url 'approve_comment' pk=comment.pk %}">Approve</a>
+                {% endif %}
+                <a href="{% url 'delete_comment' pk=comment.pk %}">Delete</a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul> {% endcomment %}
+
+    {% comment %} <ul>
+        {% for comment in article.comments.all %}
+            
+             <li>
+                {{ comment.content }} - <strong>{{ comment.patient }}</strong>
+                {% if request.user.is_authenticated and request.user.user_type == 'doctor' %}
+                    {% if not comment.is_approved %}
+                        <a href="{% url 'approve_comment' pk=comment.pk %}">Approve</a>
+                    {% endif %}
+                    <a href="{% url 'delete_comment' pk=comment.pk %}">Delete</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul> {% endcomment %}
+
+    {% if request.user.is_authenticated and request.user.user_type == 'patient' %}
+    {% include 'blog/comment_form.html' %}
+    {% endif %}
+
+    
+
+    
+</div>
+{% endblock %}
+
+{% comment %} {% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ article.title }}</h1>
+    <p>{{ article.content }}</p>
+    {% if article.image %}
+    <img src="{{ article.image.url }}" alt="{{ article.title }}" style="max-width: 100%; height: auto;">
+    {% endif %}
+    <hr>
+    <h3>Comments</h3>
+    <ul>
+        {% for comment in article.comments.all %}
+            <li>{{ comment.content }} - <strong>{{ comment.patient }}</strong></li>
+        {% endfor %}
+    </ul>
+
+    {% if request.user.is_authenticated and request.user.user_type == 'patient' %}{% include 'blog/comment_form.html' %}{% endif %}
+</div>
+{% endblock %} {% endcomment %}
+
+{% comment %} {% extends "base/base.html" %}
+{% block title %}{{ article.title }}{% endblock %}
+{% block content %}
+<h1>{{ article.title }}</h1>
+<p>{{ article.content }}</p>
+{% if user.is_authenticated and user.user_type == 'patient' %}
+    <h3>Leave a Comment:</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endif %}
+<h3>Comments:</h3>
+<ul>
+    {% for comment in article.comments.all %}
+        {% if comment.is_approved %}
+            <li>{{ comment.content }} - <i>{{ comment.patient.user.username }}</i></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endblock %} {% endcomment %}
