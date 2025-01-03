@@ -71,7 +71,7 @@ print(related_appointment.appointment_start_datetime)
 # We will send notifications in the following events:
 
 # Appointment Events
-
+#patient signup,login,forgetpassword reeset passwrod,email verification  same for doctor 
 # Patient books an appointment.
 # Doctor confirms or cancels an appointment.
 # Appointment status changes (confirmed, cancelled, completed).

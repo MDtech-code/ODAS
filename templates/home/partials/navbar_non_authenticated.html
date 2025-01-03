@@ -1,0 +1,95 @@
+{% if user_role == 'doctor' %}
+    {% comment %} <li class="nav-item">
+        <a class="btn btn-outline-primary" href="{% url 'register_doctor' %}">Sign Up</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-outline-primary" href="{% url 'home_patient' %}">Are you a Patient?</a>
+    </li> {% endcomment %}
+    <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" href="{% url 'register_doctor' %}">
+                <i class="fas fa-user-plus me-1"></i> Sign Up
+            </a>
+        </li>
+     <!-- "Are You a Doctor?" Link -->
+        <li class="nav-item">
+            <a class="btn btn-outline-primary" href="{% url 'home_patient' %}">
+                <i class="fas fa-stethoscope me-1"></i> Are you a Patient?
+            </a>
+        </li>
+{% elif user_role == 'patient' %}
+    {% comment %} <li class="nav-item">
+        <a class="btn btn-outline-primary" href="{% url 'register_patient' %}">Sign Up</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-outline-primary" href="{% url 'home_doctor' %}">Are you a Doctor?</a>
+    </li> {% endcomment %}
+    <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" href="{% url 'register_patient' %}">
+                <i class="fas fa-user-plus me-1"></i> Sign Up
+            </a>
+        </li>
+     <!-- "Are You a Doctor?" Link -->
+        <li class="nav-item">
+            <a class="btn btn-outline-primary" href="{% url 'home_doctor' %}">
+                <i class="fas fa-stethoscope me-1"></i> Are you a Doctor?
+            </a>
+        </li>
+{% else %}
+    {% comment %} <li class="nav-item">
+        <a class="btn btn-outline-primary" href="{% url 'register_patient' %}">Sign Up</a>
+    </li>
+     <li class="nav-item">
+        <a class="btn btn-outline-primary" href="{% url 'home_doctor' %}">Are you a Doctor?</a>
+    </li>  {% endcomment %}
+    <!-- signup -->
+    <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" href="{% url 'register_patient' %}">
+                <i class="fas fa-user-plus me-1"></i> Sign Up
+            </a>
+        </li>
+     <!-- "Are You a Doctor?" Link -->
+        <li class="nav-item">
+            <a class="btn btn-outline-primary" href="{% url 'home_doctor' %}">
+                <i class="fas fa-stethoscope me-1"></i> Are you a Doctor?
+            </a>
+        </li>
+{% endif %}
+ <!-- Login Modal Trigger -->
+        {% comment %} <li class="nav-item">
+            <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-url="{% url 'login' %}">
+                <i class="fas fa-sign-in-alt me-1"></i> Login
+            </button>
+        </li> {% endcomment %}
+<li class="nav-item">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-url="{% url 'login' %}">
+        Login
+    </button>
+</li> 
+
+
+{% comment %} <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" href="{% url 'register_patient' %}">
+                <i class="fas fa-user-plus me-1"></i> Sign Up
+            </a>
+        </li>
+
+        <!-- Blog Link -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'article_list' %}">
+                <i class="fas fa-blog me-1"></i> Blog
+            </a>
+        </li>
+
+        <!-- Login Modal Trigger -->
+        <li class="nav-item">
+            <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-url="{% url 'login' %}">
+                <i class="fas fa-sign-in-alt me-1"></i> Login
+            </button>
+        </li>
+
+        <!-- "Are You a Doctor?" Link -->
+        <li class="nav-item">
+            <a class="btn btn-outline-primary" href="{% url 'home_doctor' %}">
+                <i class="fas fa-stethoscope me-1"></i> Are you a Doctor?
+            </a>
+        </li> {% endcomment %}

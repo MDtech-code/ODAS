@@ -1,0 +1,5 @@
+{% if user.user_type == 'doctor' %}
+    {% include "home/partials/navbar_doctor.html" %}
+{% elif user.user_type == 'patient' %}
+    {% include "home/partials/navbar_patient.html" %}
+{% endif %}

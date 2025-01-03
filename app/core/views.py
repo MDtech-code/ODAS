@@ -4,19 +4,21 @@ from django.contrib.auth.decorators import login_required
 from django.views  import View
 from app.account.models import  Doctor
 from django.db.models import Q
+from app.appointments.models import Appointment
+from django.utils import timezone
 #! Home page for patients
 def home_patient(request):
     """
     Home page for non-logged-in patients.
     """
-    return render(request, "home/home_patient.html")
+    return render(request, "home/home_patient.html",{'user_role': 'patient'})
 
 #! Home page for doctors
 def home_doctor(request):
     """
     Home page for non-logged-in doctors.
     """
-    return render(request, "home/home_doctor.html")
+    return render(request, "home/home_doctor.html",{'user_role': 'doctor'})
 
 #! Dashboard for doctors (requires login)
 @login_required
@@ -26,7 +28,15 @@ def doctor_dashboard(request):
     """
     if not request.user.is_doctor:
         return render(request, "home/home_patient.html")  # Redirect to patient page if not a doctor
-    return render(request, "dashboard/doctor_dashboard.html")
+    upcoming_appointments = Appointment.objects.filter(
+      doctor=request.user.doctor,
+      appointment_start_datetime__gte=timezone.now()  # Filter for future appointments
+    ).order_by('appointment_start_datetime')
+    print(upcoming_appointments)
+    context = {
+      'upcoming_appointments': upcoming_appointments,
+    }
+    return render(request, "dashboard/doctor_dashboard.html",context)
 
 #! Dashboard for patients (requires login)
 # @login_required

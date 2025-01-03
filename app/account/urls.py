@@ -4,8 +4,8 @@ from app.account.views import PatientRegistrationView, PatientEditProfileView,Pa
 urlpatterns = [
     path('register/patient/', PatientRegistrationView.as_view(), name='register_patient'),
     path('doctor/register/', DoctorRegisterView.as_view(), name='register_doctor'),
-    path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', custom_logout, name='logout'),
+    path('login/', CustomLoginView.as_view(), name='login'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', PasswordResetDoneView.as_view(template_name='account/password_reset_done.html'), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', PasswordResetConfirmView.as_view(template_name='account/password_reset_confirm.html'), name='password_reset_confirm'),

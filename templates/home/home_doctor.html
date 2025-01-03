@@ -1,11 +1,101 @@
 {% extends "base/base.html" %}
-
+{% load static %}
 {% block title %}Doctor Home{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h1>Welcome, Doctor</h1>
-    <p>This is the home page for doctors.</p>
-    <a href="{% url 'doctor_dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center text-center mb-5">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold text-primary">Welcome, Doctor!</h1>
+            <p class="lead text-muted">
+                Manage your practice, view patient appointments, and provide quality healthcare services online.
+            </p>
+            <a href="{% url 'register_doctor' %}" class="btn btn-primary btn-lg mt-3">Register as a Doctor</a>
+        </div>
+        <div class="col-md-6">
+            <img src="{% static 'images/doctor/doctor_hero_section.jpg' %}" alt="Doctor's Practice" class="img-fluid">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row text-center mb-5">
+        <h2 class="fw-bold text-dark mb-4">Why Choose Us?</h2>
+        <div class="col-md-4">
+            <div class="card p-4 shadow-sm">
+                <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                <h5>Manage Appointments</h5>
+                <p>View and manage your appointments with ease.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 shadow-sm">
+                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                <h5>Engage with Patients</h5>
+                <p>Communicate with your patients and monitor their progress.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 shadow-sm">
+                <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                <h5>Secure Platform</h5>
+                <p>Your data and patient information are protected with high-end security measures.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="row text-center mb-5">
+        <h2 class="fw-bold text-dark mb-4">How It Works</h2>
+        <div class="col-md-4">
+            <i class="fas fa-user-check fa-3x text-primary mb-3"></i>
+            <h5>Step 1: Register</h5>
+            <p>Sign up and create your doctor profile.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-search fa-3x text-primary mb-3"></i>
+            <h5>Step 2: Set Your Availability</h5>
+            <p>Set your availability and start accepting appointments.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+            <h5>Step 3: Provide Healthcare</h5>
+            <p>Consult patients and provide quality healthcare services.</p>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="row text-center bg-light py-5">
+        <h2 class="fw-bold text-dark mb-4">What Our Doctors Say</h2>
+        <div class="col-md-4">
+            <blockquote class="blockquote">
+                <p>"This platform made it so much easier to connect with my patients, even remotely!"</p>
+                <footer class="blockquote-footer">Dr. Sarah K.</footer>
+            </blockquote>
+        </div>
+        <div class="col-md-4">
+            <blockquote class="blockquote">
+                <p>"I can manage my appointments and patient queries in one place. It's incredibly efficient!"</p>
+                <footer class="blockquote-footer">Dr. John L.</footer>
+            </blockquote>
+        </div>
+        <div class="col-md-4">
+            <blockquote class="blockquote">
+                <p>"The platform's tools for patient management are fantastic, and my patients love it!"</p>
+                <footer class="blockquote-footer">Dr. Emma R.</footer>
+            </blockquote>
+        </div>
+    </div>
+
+    <!-- Call-to-Action Section -->
+    <div class="row text-center bg-light py-5">
+        <h3 class="fw-bold text-dark mb-3">Ready to Start?</h3>
+        <p>Join thousands of doctors transforming their practices with our online platform.</p>
+        <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" href="{% url 'register_doctor' %}">
+                <i class="fas fa-user-plus me-1"></i> Sign Up as a Doctor
+            </a>
+        </li>
+    </div>
 </div>
 {% endblock %}

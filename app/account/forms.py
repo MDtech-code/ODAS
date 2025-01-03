@@ -6,29 +6,67 @@ from app.account.utils.validations import validate_min_experience
 
 
 #! patient form
-class PatientRegistrationForm(UserCreationForm,AgeValidationMixin, PhoneNumberValidationMixin):
+# class PatientRegistrationForm(UserCreationForm,AgeValidationMixin, PhoneNumberValidationMixin):
+#     """
+#     Form for registering a new patient. Extends the default UserCreationForm
+#     and includes additional fields for the Patient model.
+#     """
+#     min_age = 18
+#     email = forms.EmailField(required=True, help_text="Enter a valid email address.")
+#     gender = forms.ChoiceField(choices=Patient.GENDER_CHOICES, required=True, widget=forms.RadioSelect)
+#     date_of_birth = forms.DateField(
+#         required=True,
+#         widget=forms.DateInput(attrs={'type': 'date'}),
+#         help_text="You must be at least 18 years old to register.",
+#     )
+#     phone_number = forms.CharField(
+#         required=True,
+#         help_text="Include your country code. Format: +923001234567",
+#     )
+    
+#     class Meta:
+#         model = User
+#         fields = ['username', 'email', 'gender', 'date_of_birth', 'phone_number', 'password1', 'password2']
+
+class PatientRegistrationForm(UserCreationForm):
     """
     Form for registering a new patient. Extends the default UserCreationForm
     and includes additional fields for the Patient model.
     """
     min_age = 18
-    email = forms.EmailField(required=True, help_text="Enter a valid email address.")
-    gender = forms.ChoiceField(choices=Patient.GENDER_CHOICES, required=True, widget=forms.RadioSelect)
+    email = forms.EmailField(
+        required=True, 
+        help_text="Enter a valid email address.",
+        widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'})
+    )
+    gender = forms.ChoiceField(
+        choices=Patient.GENDER_CHOICES, 
+        required=True,
+        widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
+    )
     date_of_birth = forms.DateField(
         required=True,
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         help_text="You must be at least 18 years old to register.",
     )
     phone_number = forms.CharField(
         required=True,
-        help_text="Include your country code. Format: +923001234567",
+        help_text="Include your country code. Format: +92XXXXXXXXXX",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a  number'})
     )
     
     class Meta:
         model = User
         fields = ['username', 'email', 'gender', 'date_of_birth', 'phone_number', 'password1', 'password2']
-
-    
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control  password-input', 'placeholder': 'Enter your password'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control   password-input', 'placeholder': 'Confirm your password'}),
+        }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Remove help text for password fields
+        self.fields['password1'].help_text = ""
 class PatientProfileForm(forms.ModelForm, AgeValidationMixin, PhoneNumberValidationMixin):
     min_age = 18
     first_name= forms.CharField(
@@ -44,7 +82,7 @@ class PatientProfileForm(forms.ModelForm, AgeValidationMixin, PhoneNumberValidat
     phone_number = forms.CharField(
         required=True,
         help_text="Include your country code. Format: +923001234567",
-        widget=forms.TextInput(attrs={'class': 'form-control'}),  # Bootstrap class added
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter a  number'}),
     )
     date_of_birth = forms.DateField(
         label="Date of Birth",
@@ -92,25 +130,29 @@ class DoctorRegistrationForm(UserCreationForm,AgeValidationMixin, PhoneNumberVal
     min_age = 32
     phone_number = forms.CharField(
         required=True,
-        help_text="Include your country code. Format: +923001234567",
+        help_text="Include your country code. Format: +92XXXXXXXXXX",
+        widget=forms.EmailInput(attrs={'class': 'form-control',  'placeholder': 'Enter a phone number'})
         
     )
     speciality = forms.ModelChoiceField(
         label="Speciality",
         queryset=Speciality.objects.all(),
         required=True,
+        widget=forms.Select(attrs={'class': 'form-control'}) 
     )
     gender = forms.ChoiceField(
         label="Gender",
         choices=[('Male', 'Male'), ('Female', 'Female')],
-       
+        widget=forms.Select(attrs={'class': 'form-control'}) 
+
+        
     )
     email = forms.EmailField(required=True, help_text="Enter a valid email address.",
-                             widget=forms.EmailInput(attrs={ 'placeholder': 'Enter email'})
+                             widget=forms.EmailInput(attrs={'class': 'form-control',  'placeholder': 'Enter email'})
     )
     date_of_birth = forms.DateField(
         label="Date of Birth",
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         help_text="You must be at least 32 years old to register.",
         required=True,
     )
@@ -118,12 +160,20 @@ class DoctorRegistrationForm(UserCreationForm,AgeValidationMixin, PhoneNumberVal
     class Meta:
         model = User
         fields = ['username', 'email', 'phone_number', 'date_of_birth', 'gender','speciality', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your username'}),
+            'password1': forms.PasswordInput(attrs={'class': 'form-control  password-input', 'placeholder': 'Enter your password'}),
+            'password2': forms.PasswordInput(attrs={'class': 'form-control   password-input', 'placeholder': 'Confirm your password'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Retrieve all specialities from the database and dynamically populate the choices
         specialties = Speciality.objects.all().values_list('id', 'name')
         self.fields['speciality'].choices = specialties
+        self.fields['password1'].help_text = ""
+    
+       
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -144,12 +194,13 @@ class DoctorProfileForm(forms.ModelForm,AgeValidationMixin, PhoneNumberValidatio
     min_age = 32
     phone_number = forms.CharField(
         required=True,
-        help_text="Include your country code. Format: +923001234567",
+        help_text="Include your country code. Format: +92XXXXXXXXXX",
+        widget=forms.EmailInput(attrs={'class': 'form-control',  'placeholder': 'Enter a phone number'})
         
     )
     date_of_birth = forms.DateField(
         label="Date of Birth",
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'class': 'form-control','type': 'date'}),
         help_text="You must be at least 32 years old to register.",
         required=True,
     )
@@ -186,6 +237,9 @@ class DoctorProfileForm(forms.ModelForm,AgeValidationMixin, PhoneNumberValidatio
             'phone_number', 'date_of_birth', 'speciality', 'bio', 
             'years_of_experience', 'consultation_fee', 'image', 'certificate'
         ]
+        widgets = {
+            'speciality': forms.Select(attrs={'class': 'form-control'}),
+        }
 
 
 

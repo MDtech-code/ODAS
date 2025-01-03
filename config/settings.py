@@ -58,6 +58,7 @@ PROJECT_APPS = [
     'app.chat',
     'app.appointments',
     'app.blog',
+    'app.notification'
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 # Specify internal IPs for local development 
@@ -90,6 +91,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app.core.context_processors.user_role_context',
             ],
         },
     },
@@ -188,7 +190,24 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TIMEZONE = 'Asia/Karachi' #Your Time Zone
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 
 
 
 
+
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'DEBUG',
+    },
+}

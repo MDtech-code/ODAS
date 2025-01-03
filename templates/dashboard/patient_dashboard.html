@@ -3,6 +3,85 @@
 {% load doctor_filters %}
 
 {% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Available Doctors</h2>
+
+    <!-- Search Bar -->
+    <div class="row mb-4 justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <form id="searchForm" method="GET" action="{% url 'patient_dashboard' %}" class="d-flex">
+                <input 
+                    type="text" 
+                    name="search" 
+                    value="{{ query }}" 
+                    placeholder="Search by doctor name or specialty" 
+                    id="searchInput" 
+                    class="form-control me-2 shadow-sm" 
+                />
+                <button type="submit" class="btn btn-primary shadow-sm">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Doctor Cards -->
+    <div class="row">
+        {% for doctor in doctors %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card shadow-lg border-0 rounded-lg overflow-hidden h-100">
+                <!-- Doctor Image (Circle) -->
+                <div class="card-img-top position-relative">
+                    <img 
+                        src="{{ doctor.image.url }}" 
+                        alt="{{ doctor.user.username }}"
+                        class="rounded-circle mx-auto d-block img-fluid" 
+                        style="height: 180px; width: 180px; object-fit: cover;" 
+                    />
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <!-- Doctor Name and Speciality -->
+                    <h5 class="card-title text-center text-dark mt-3">{{ doctor.user.get_full_name|default:doctor.user.username }}</h5>
+                    <p class="card-text text-center text-muted">{{ doctor.speciality.name }}</p>
+
+                    <!-- Availability -->
+                    <div class="mb-3 text-center">
+                        <h6 class="text-muted">Availability</h6>
+                        <div class="d-flex justify-content-center flex-wrap">
+                            {% for day in doctor.unique_days %}
+                            <span class="badge bg-info me-2 mb-2">{{ day|get_day_display }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Charges -->
+                    <p class="card-text text-center">Charges: Rs. {{ doctor.consultation_fee|floatformat:2 }}</p>
+
+                    <!-- Book Appointment Button -->
+                    <button type="button" 
+                            class="btn btn-primary w-100 mt-auto shadow-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#appointmentModal" 
+                            data-doctor-name="{{ doctor.user.get_full_name|default:doctor.user.username }}">
+                        Book Appointment
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Include Modal for checking Availability -->
+{% include "dashboard/patient/modals/check_availability_modal.html" %}
+
+<script src="{% static 'js/check_availability.js' %}"></script>
+
+{% endblock %}
+
+{% comment %} {% extends 'base/base.html' %}
+{% load static %}
+{% load doctor_filters %}
+
+{% block content %}
 <div>
     <h2>Available Doctors</h2>
     <!-- Search Bar -->
@@ -43,17 +122,7 @@
         {% endfor %}
     </div>
 </div>
-            {% comment %} <div>
-                <h4>Availability</h4>
-                <div>
-                    {% for availability in doctor.availability.all %}
-                        <span>
-                            {{ availability.get_day_of_week_display }}
-                        </span>
-                    {% endfor %}
-                </div>
-            </div>
-             {% endcomment %}
+            
             <!-- Charges -->
             <div>
                 Charges: Rs. {{ doctor.consultation_fee|floatformat:2 }}
@@ -75,4 +144,4 @@
 <script src="{% static 'js/check_availability.js' %}"></script>
 
 
-{% endblock %}
+{% endblock %} {% endcomment %}

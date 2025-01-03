@@ -9,15 +9,35 @@ from app.account.models import Patient
 from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.views import View
+from django.db.models import Q
+from app.core.utils.pagination import paginate_queryset
 
 # Article Views
+
+
 class ArticleListView(ListView):
     model = Article
     template_name = "blog/article_list.html"
     context_object_name = "articles"
-
+      # Default to 1 if no page parameter
+    
     def get_queryset(self):
+        query = self.request.GET.get('search', '')
+        if query:
+            # Use Q objects for case-insensitive search by doctor name and title
+            return Article.objects.select_related("doctor").filter(
+                Q(doctor__user__username__icontains=query) | 
+                Q(title__icontains=query)
+            ).order_by("-created_at")
         return Article.objects.select_related("doctor").order_by("-created_at")
+
+# class ArticleListView(ListView):
+#     model = Article
+#     template_name = "blog/article_list.html"
+#     context_object_name = "articles"
+
+#     def get_queryset(self):
+#         return Article.objects.select_related("doctor").order_by("-created_at")
 
 
 class ArticleDetailView(DetailView):

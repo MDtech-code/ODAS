@@ -1,11 +1,160 @@
 {% extends "base/base.html" %}
+{% load static %}
+{% block title %}Patient Home{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center text-center mb-5">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold text-primary">Welcome to Online Doctor Appointments</h1>
+            <p class="lead text-muted">
+                Manage your healthcare needs with ease. Book appointments, view schedules, and stay connected with your doctor.
+            </p>
+            <a href="{% url 'register_patient' %}" class="btn btn-primary btn-lg mt-3">Register Now</a>
+        </div>
+        <div class="col-md-6">
+            <img src="{% static 'images/patient/patient_hero_section.jpg' %}" alt="Healthcare" class="img-fluid">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row text-center mb-5">
+        <h2 class="fw-bold text-dark mb-4">Why Choose Us?</h2>
+        <div class="col-md-4">
+            <div class="card p-4">
+                <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                <h5>Qualified Doctors</h5>
+                <p>Get access to top-rated and experienced doctors.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4">
+                <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+                <h5>Easy Appointments</h5>
+                <p>Book appointments at your convenience.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4">
+                <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                <h5>Secure Platform</h5>
+                <p>Your data is safe and protected with us.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="row text-center mb-5">
+        <h2 class="fw-bold text-dark mb-4">How It Works</h2>
+        <div class="col-md-4">
+            <i class="fas fa-user-check fa-3x text-primary mb-3"></i>
+            <h5>Step 1: Register</h5>
+            <p>Sign up and create your patient profile.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-search fa-3x text-primary mb-3"></i>
+            <h5>Step 2: Find a Doctor</h5>
+            <p>Search for doctors based on your needs.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-check-circle fa-3x text-primary mb-3"></i>
+            <h5>Step 3: Book Appointment</h5>
+            <p>Select a time slot and confirm your booking.</p>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="row text-center bg-light py-5">
+        <h2 class="fw-bold text-dark mb-4">What Our Patients Say</h2>
+        <div class="col-md-4">
+            <blockquote class="blockquote">
+                <p>"The platform is so easy to use, and I can book appointments in minutes!"</p>
+                <footer class="blockquote-footer">Sarah M.</footer>
+            </blockquote>
+        </div>
+        <div class="col-md-4">
+            <blockquote class="blockquote">
+                <p>"Thanks to this platform, I never miss a checkup."</p>
+                <footer class="blockquote-footer">John D.</footer>
+            </blockquote>
+        </div>
+        <div class="col-md-4">
+            <blockquote class="blockquote">
+                <p>"Great service and very reliable!"</p>
+                <footer class="blockquote-footer">Emma R.</footer>
+            </blockquote>
+        </div>
+    </div>
+
+    <!-- Call-to-Action Section -->
+    <div class="row text-center bg-light py-5">
+        <h3 class="fw-bold text-dark mb-3">Ready to Start?</h3>
+        <p>Join thousands of patients managing their health online.</p>
+        <li class="nav-item">
+            <a class="btn btn-outline-primary me-2" href="{% url 'register_patient' %}">
+                <i class="fas fa-user-plus me-1"></i> Sign Up
+            </a>
+        </li>
+    </div>
+</div>
+{% endblock %}
+
+{% comment %} {% extends "base/base.html" %}
+{% load static %}
 
 {% block title %}Patient Home{% endblock %}
 
 {% block content %}
-<div class="text-center">
-    <h1>Welcome to Healthcare Platform</h1>
-    <p>This is the home page for patients.</p>
-   
+<div class="container mt-5">
+    <!-- Hero Section -->
+    <div class="row align-items-center text-center mb-5">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold text-primary">Welcome to Online Doctor Appointments</h1>
+            <p class="lead text-muted">
+                Manage your healthcare needs with ease. Book appointments, view schedules, and stay connected with your doctor.
+            </p>
+            <a href="/register" class="btn btn-primary btn-lg mt-3">Register Now</a>
+        </div>
+        <div class="col-md-6">
+            <img src="{% static 'images/healthcare.svg' %}" alt="Healthcare" class="img-fluid">
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row text-center mb-5">
+        <h2 class="fw-bold text-dark mb-4">Why Choose Us?</h2>
+        <div class="col-md-4">
+            <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+            <h5>Qualified Doctors</h5>
+            <p>Get access to top-rated and experienced doctors.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-calendar-alt fa-3x text-primary mb-3"></i>
+            <h5>Easy Appointments</h5>
+            <p>Book appointments at your convenience.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+            <h5>Secure Platform</h5>
+            <p>Your data is safe and protected with us.</p>
+        </div>
+    </div>
+
+    <!-- Call-to-Action -->
+    <div class="row text-center bg-light py-5">
+        <h3 class="fw-bold text-dark mb-3">Ready to Start?</h3>
+        <p>Join thousands of patients managing their health online.</p>
+        <a href="/login" class="btn btn-outline-primary btn-lg">Log In</a>
+        <a href="/register" class="btn btn-primary btn-lg ms-3">Sign Up</a>
+    </div>
 </div>
 {% endblock %}
+
+{% comment %} {% extends "base/base.html" %}
+
+{% block title %}Patient Home{% endblock %}
+
+{% block content %}
+
+{% endblock %} {% endcomment %} 

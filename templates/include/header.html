@@ -2,6 +2,60 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <!-- Logo -->
+        {% comment %} <a class="navbar-brand" href="{% url 'home_patient' %}">
+            <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+            Healthcare Platform
+        </a> {% endcomment %}
+        {% if user.is_authenticated %}
+            {% if user.user_type == 'doctor' %}
+                <a class="navbar-brand" href="{% url 'doctor_dashboard' %}">
+                    <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+                    Healthcare Platform
+                </a>
+            {% else %}
+                <a class="navbar-brand" href="{% url 'patient_dashboard' %}">
+                    <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+                    Healthcare Platform
+                </a>
+            {% endif %}
+        {% endif %}
+        {% if user_role == 'patient' %}
+        <a class="navbar-brand" href="{% url 'home_patient' %}">
+                    <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+                    Healthcare Platform
+                </a>
+        {% else %}
+         <a class="navbar-brand" href="{% url 'home_doctor' %}">
+                    <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+                    Healthcare Platform
+                </a>
+        {% endif %}
+
+        <!-- Toggler -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    {% include "home/partials/navbar_authenticated.html" %}
+                {% else %}
+                    {% include "home/partials/navbar_non_authenticated.html" %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<!-- Include Login Modal -->
+{% include 'account/auth/modal/login_modal.html' %} 
+
+ {% comment %} {% load static %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <!-- Logo -->
         {% if user.is_authenticated %}
             {% if user.user_type == 'doctor' %}
                 <a class="navbar-brand" href="{% url 'home_doctor' %}">
@@ -15,10 +69,23 @@
                 </a>
             {% endif %}
         {% else %}
+            {% if user_role == 'patient' %}
+            
             <a class="navbar-brand" href="{% url 'home_patient' %}">
                 <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
                 Healthcare Platform
             </a>
+            {% elif user_role == 'doctor' %}
+            <a class="navbar-brand" href="{% url 'home_doctor' %}">
+                <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+                Healthcare Platform
+            </a>
+            {% else %}
+            <a class="navbar-brand" href="{% url 'home_patient' %}">
+                <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
+                Healthcare Platform
+            </a>
+            {% endif %}
         {% endif %}
 
         <!-- Toggler -->
@@ -49,79 +116,76 @@
                         </li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                     {% endif %}
-                {% else %}
-                    <!-- Anonymous User Navigation -->
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'register_patient' %}">Sign Up</a></li>
+
+
+
+                 {% else %}
+                 {% if user_role == patient %}
+                 <!-- For Non-Authenticated Users -->
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="{% url 'register_patient' %}">Sign Up</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'article_list' %}">Blog</a>
                     </li>
+                    
+                   
+                   
+                    <!-- Modal Trigger for Login -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-url="{% url 'login' %}">
+                        Login
+                    </button>
+                     <!-- Ask if user is a doctor or patient -->
                     <li class="nav-item">
-                        <a class="btn btn-outline-primary" href="{% url 'register_doctor' %}">Are you a Doctor?</a>
+                        <a class="btn btn-outline-primary" href="{% url 'home_doctor' %}">Are you a Doctor?</a>
                     </li>
+                {% elif  user_role == 'doctor'%}
+                    <!-- For Non-Authenticated Users -->
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="{% url 'register_doctor' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'article_list' %}">Blog</a>
+                    </li>
+                    
+                   
+                   
+                    <!-- Modal Trigger for Login -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-url="{% url 'login' %}">
+                        Login
+                    </button>
+                      <!-- Ask if user is a doctor or patient -->
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="{% url 'home_patient' %}">Are you a Patient?</a>
+                    </li>
+                {% else %}
+                <!-- For Non-Authenticated Users -->
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="{% url 'register_patient' %}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'article_list' %}">Blog</a>
+                    </li>
+                    
+                    
+                    <!-- Modal Trigger for Login -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-url="{% url 'login' %}">
+                        Login
+                    </button>
+                    <!-- Ask if user is a doctor or patient -->
+                    <li class="nav-item">
+                        <a class="btn btn-outline-primary" href="{% url 'home_doctor' %}">Are you a Doctor?</a>
+                    </li>
+                   
+                    
+                 {% endif %}
+                    
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
 
-
-
-
-{% comment %} {% load static %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <!-- Logo -->
-     {% if user.is_authenticated %}
-    {% if user.user_type == 'doctor' %}  {# More robust check #}
-        <a class="navbar-brand" href="{% url 'home_doctor' %}">
-            <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
-            Healthcare Platform
-        </a>
-    {% else %} {# Implied patient or other user type #}
-        <a class="navbar-brand" href="{% url 'home_patient' %}">
-            <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
-            Healthcare Platform
-        </a>
-    {% endif %}
-{% else %} {# User is not authenticated #}
-    <a class="navbar-brand" href="{% url 'home_patient' %}">
-        <img src="{% static 'images/logo/ODAS_Logo.png' %}" alt="Logo" style="height: 30px; margin-right: 8px;">
-        Healthcare Platform
-    </a>
-{% endif %}
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                {% if user.is_authenticated %}
-                    {% if user.is_doctor %}
-                        <!-- Doctor Navigation -->
-                        <li class="nav-item"><a class="nav-link" href="{% url 'doctor_dashboard' %}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Appointments</a></li> 
-                        <li class="nav-item"><a class="nav-link" href="{% url 'doctor-profile' %}">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-                       
-                    {% else %}
-                        <!-- Patient Navigation -->
-                        <li class="nav-item"><a class="nav-link" href="{% url 'patient_dashboard' %}">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Appointments</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'patient_profile' %}">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-                    {% endif %}
-                {% else %}
-                    <!-- Anonymous User Navigation -->
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'register_patient' %}">Sign Up</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
-                    <li class="nav-item">
-                        <a class="btn btn-outline-primary" href="{% url 'register_doctor' %}">Are you a Doctor?</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</nav> {% endcomment %}
+<!-- Include Login Modal -->
+{% include 'account/auth/modal/login_modal.html' %}
+ {% endcomment %}

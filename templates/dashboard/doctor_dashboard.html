@@ -1,10 +1,124 @@
 {% extends "base/base.html" %}
+{% load static %}
 
 {% block title %}Doctor Dashboard{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Doctor Dashboard</h1>
-    <p>Manage your appointments, patients, and schedules here.</p>
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel" style="background-color:rgb(252, 218, 180); ">
+  <!-- Indicators -->
+  <div class="carousel-indicators ">
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
+  </div>
+
+  <!-- Carousel Inner -->
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <div class="d-flex flex-column align-items-center text-center" style="color: #343a40;">
+        <img src="{% static 'images/doctor/avatar/male-doc.png' %}" alt="Couldn't load image" class="d-block rounded-circle" style="max-width: 200px; height: 200px; object-fit: cover;">
+        <h1>Hello Dr.{{ request.user.username}}!</h1>
+        <h4>Welcome to your dashboard!</h4>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div class="d-flex flex-column align-items-center text-center" style="color: #343a40;">
+        <img src="{% static 'images/doctor/apoint.png' %}" alt="Couldn't load image" class="d-block rounded-circle" style="max-width: 200px; height: 200px; object-fit: cover;">
+        {% if upcoming_appointments.count > 0 %}
+          <h1>You have {{ upcoming_appointments.count }} upcoming appointments</h1>
+          <h4>View them in the Appointments section</h4>
+        {% else %}
+          <h1>You have no upcoming appointments</h1>
+          <h4>Stay updated for new appointments!</h4>
+        {% endif %}
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div class="d-flex flex-column align-items-center text-center" style="color: #343a40;">
+        <img src="{% static 'images/doctor/edit-pic.png' %}" alt="Couldn't load image" class="d-block rounded-circle" style="max-width: 200px; height: 200px; object-fit: cover;">
+        <h1>Add to your profile</h1>
+        <h4>at the Edit Details tab</h4>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div class="d-flex flex-column align-items-center text-center" style="color: #343a40;">
+        <img src="{% static 'images/doctor/doc-dashboard-blog.png' %}" alt="Couldn't load image" class="d-block rounded-circle" style="max-width: 200px; height: 200px; object-fit: cover;">
+        <h1>Go to the Articles Tab</h1>
+        <h4>to write medical blogs</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
 </div>
 {% endblock %}
+
+
+
+{% comment %} {% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Doctor Dashboard{% endblock %}
+
+{% block content %}
+<div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+  <!-- Indicators -->
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="3" aria-label="Slide 4"></button>
+  </div>
+
+  <!-- Carousel Inner -->
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <div class="d-flex flex-column align-items-center text-center">
+        <img src="{% static 'images/doctor/avatar/male-doc.png' %}" alt="Couldn't load image" class="d-block" style="max-width: 200px;">
+        <h1>Hello Dr.</h1>
+        <h4>Welcome to your dashboard!</h4>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div class="d-flex flex-column align-items-center text-center">
+        <img src="{% static 'images/doctor/apoint.png' %}" alt="Couldn't load image" class="d-block" style="max-width: 200px;">
+        <h1>You have 0 appointments upcoming</h1>
+        <h4>Go to Appointments tab to stay updated</h4>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div class="d-flex flex-column align-items-center text-center">
+        <img src="{% static 'images/doctor/edit-pic.png' %}" alt="Couldn't load image" class="d-block" style="max-width: 200px;">
+        <h1>Add to your profile</h1>
+        <h4>at the Edit Details tab</h4>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <div class="d-flex flex-column align-items-center text-center">
+        <img src="{% static 'images/doctor/doc-dashboard-blog.png' %}" alt="Couldn't load image" class="d-block" style="max-width: 200px;">
+        <h1>Go to the Articles Tab</h1>
+        <h4>to write medical blogs</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+{% endblock %} {% endcomment %}

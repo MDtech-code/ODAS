@@ -20,6 +20,7 @@ from django.contrib.auth import logout
 from django.views import View
 from django.http import QueryDict
 import json
+from django.contrib.auth import login
 #! patient functionality 
 class PatientRegistrationView(FormView):
     template_name = 'account/patient_registration.html'
@@ -34,15 +35,6 @@ class PatientRegistrationView(FormView):
             gender=form.cleaned_data['gender'],
             date_of_birth=form.cleaned_data['date_of_birth'],
             phone_number=form.cleaned_data['phone_number'],
-        )
-
-        # Send a welcome email
-        send_mail(
-            subject="Welcome to the Platform",
-            message=f"Hi {user.username}, thank you for registering!",
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[user.email],
-            fail_silently=False,
         )
         return super().form_valid(form)
     
@@ -319,22 +311,86 @@ def delete_payment_method(request, pk):
 #! for doctor and patient login,logout,forget,reset
 
 
+
+
+# class CustomLoginView(LoginView):
+#     """
+#     Custom login view to support both template-based and AJAX-based logins.
+#     """
+#     redirect_authenticated_user = True
+
+#     def form_invalid(self, form):
+#         """
+#         Handle invalid form submissions for AJAX requests.
+#         """
+#         if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+#             return JsonResponse({"success": False, "error": form.errors.get("__all__", ["Invalid credentials"])[0]})
+#         return super().form_invalid(form)
+
+#     def form_valid(self, form):
+#         """
+#         Handle valid form submissions for AJAX requests.
+#         """
+#         if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+#             user = form.get_user()
+#             login(self.request, user)
+
+#             # Determine the redirection URL based on user type
+#             redirect_url = reverse_lazy("doctor_dashboard") if user.is_doctor() else reverse_lazy("patient_dashboard")
+#             return JsonResponse({"success": True, "redirect_url": redirect_url})
+#         return super().form_valid(form)
+
+#     @method_decorator(csrf_exempt)
+#     def dispatch(self, *args, **kwargs):
+#         """
+#         Allow CSRF exemption for AJAX requests.
+#         """
+#         return super().dispatch(*args, **kwargs)
+
 class CustomLoginView(LoginView):
-    template_name = 'account/auth/login.html'
+    """
+    Custom login view to support both template-based and AJAX-based logins,
+    and dynamically render the login form.
+    """
     redirect_authenticated_user = True
 
-    def get_success_url(self):
+    def get(self, request, *args, **kwargs):
         """
-        Determines where to redirect users after successful login
-        based on their user type (doctor or patient).
+        Handle GET requests for both normal and AJAX requests.
         """
-        user = self.request.user
-        if user.is_authenticated:
-            if user.is_doctor():
-                return reverse_lazy('doctor_dashboard')  # Redirect to doctor dashboard
-            elif user.is_patient():
-                return reverse_lazy('patient_dashboard')  # Redirect to patient dashboard
-        return reverse_lazy('home_patient')  # Default fallback
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            # Render the form as HTML and return it via JSON response
+            form_html = render(request, "account/auth/login_form.html", {"form": self.get_form()}).content.decode("utf-8")
+            return JsonResponse({"success": True, "form_html": form_html})
+        return super().get(request, *args, **kwargs)
+
+    def form_invalid(self, form):
+        """
+        Handle invalid form submissions for AJAX requests.
+        """
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return JsonResponse({"success": False, "error": form.errors.get("__all__", ["Invalid credentials"])[0]})
+        return super().form_invalid(form)
+
+    def form_valid(self, form):
+        """
+        Handle valid form submissions for AJAX requests.
+        """
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            user = form.get_user()
+            login(self.request, user)
+
+            # Determine the redirection URL based on user type
+            redirect_url = reverse_lazy("doctor_dashboard") if user.is_doctor() else reverse_lazy("patient_dashboard")
+            return JsonResponse({"success": True, "redirect_url": redirect_url})
+        return super().form_valid(form)
+
+    @method_decorator(csrf_exempt)
+    def dispatch(self, *args, **kwargs):
+        """
+        Allow CSRF exemption for AJAX requests.
+        """
+        return super().dispatch(*args, **kwargs)
 
 class PasswordResetView(PasswordResetView):
     template_name = 'account/auth/password_reset.html'
